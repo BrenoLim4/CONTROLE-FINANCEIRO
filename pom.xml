@@ -13,6 +13,43 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>controle-financeiro</name>
 	<description>BackEnd controle financeiro</description>
+	<packaging>jar</packaging>
+
+	<profiles>
+		<profile>
+			<id>lombok-build</id>
+			<properties>
+				<src.dir>${project.build.directory}/generated-sources/delombok</src.dir>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>dev</build.profile.id>
+				<profileActive>dev</profileActive>
+			</properties>
+		</profile>
+		<profile>
+			<id>work</id>
+			<properties>
+				<build.profile.id>work</build.profile.id>
+				<profileActive>work</profileActive>
+			</properties>
+		</profile>
+<!--Ainda não implementado-->
+<!--		<profile>-->
+<!--			<id>prod</id>-->
+<!--			<properties>-->
+<!--				<build.profile.id>prod</build.profile.id>-->
+<!--				<profileActive>prod</profileActive>-->
+<!--			</properties>-->
+<!--		</profile>-->
+	</profiles>
+
 	<properties>
 		<java.version>1.8</java.version>
 <!--		<spring.version>6.0.2.RELEASE</spring.version>-->

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import sop.ce.gov.controlefinanceiro.api.config.ApplicationContextLoad;
+import sop.ce.gov.controlefinanceiro.api.security.exceptions.UnauthenticatedUser;
 import sop.ce.gov.controlefinanceiro.domain.entidade.User;
 import sop.ce.gov.controlefinanceiro.domain.repositories.UserRepository;
 
@@ -26,27 +27,22 @@ public class JWTTokenAuthenticateService {
     private static final long EXPIRATION_TIME = 3600000;
     /*Senha única de autenticação do token*/
 //    @Value("${jwt-secret}")
-    private static final String SECRET = "vdcsa$#";
+    private static final String SECRET = "1369*$#El";
 
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String HEADER_STRING = "Authorization";
 
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
-
-
     public void addAuthentication(HttpServletResponse response, String username) throws IOException {
         /*Montagem do Token*/
-        //Defini qual vai ser o algoritmo da assinatura no caso vai ser o HMAC SHA512
-//        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS512;
-
-
 
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET);
         SecretKeySpec key = new SecretKeySpec(apiKeySecretBytes, SIGNATURE_ALGORITHM.getJcaName());
 
 
         String JWT = Jwts.builder()
+                .setIssuedAt(new Date())
                 .setSubject(username)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SIGNATURE_ALGORITHM, key).compact();
@@ -80,7 +76,7 @@ public class JWTTokenAuthenticateService {
             }
         }
 
-        return null;
+        throw new UnauthenticatedUser();
     }
 
 }
