@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import sop.ce.gov.controlefinanceiro.domain.services.ImplUserDetailsServices;
@@ -35,8 +36,11 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter{
                 .anyRequest().authenticated()
                 .and().logout().logoutSuccessUrl("/login")
                 /*Mapeia URL de logout e invalida o usuário*/
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
-        /*TODO: Filtrar requisiççies de login para autenticação*/
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                /*Filtrar requisiççies de login para autenticação*/
+                .and().addFilterBefore(new JWTLoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTApiAuthenticateFilter(), UsernamePasswordAuthenticationFilter.class);
+
 //        http.addFilterBefore()
     }
 
@@ -44,12 +48,5 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter{
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsServices).passwordEncoder(new BCryptPasswordEncoder());
     }
-
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-//        return http.cors().and().authorizeHttpRequests((auth) -> auth.anyRequest().authenticated())
-//                .authorizeHttpRequests()
-//                .httpBasic(Customizer.withDefaults())
-//                .build();
-//    }
 
 }
